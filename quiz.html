@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Quiz - Climate Watch</title>
+    <style>
+        :root {
+            --primary-blue: #1a4b77;
+            --secondary-blue: #2d7fc1;
+            --light-blue: #e6f3ff;
+            --text-color: #333;
+            --correct-green: #4CAF50;
+            --wrong-red: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-blue);
+            color: var(--text-color);
+        }
+
+        nav {
+            background-color: rgba(26, 75, 119, 0.9);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            margin: 0 auto;
+            max-width: 1200px;
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        nav .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--light-blue);
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 100px auto 2rem;
+            padding: 2rem;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-header h1 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .question-container {
+            display: none;
+            margin-bottom: 2rem;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: var(--primary-blue);
+        }
+
+        .options {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .option {
+            padding: 1rem;
+            background-color: var(--light-blue);
+            border: 2px solid var(--secondary-blue);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            background-color: var(--secondary-blue);
+            color: white;
+        }
+
+        .option.correct {
+            background-color: var(--correct-green);
+            color: white;
+            border-color: var(--correct-green);
+        }
+
+        .option.wrong {
+            background-color: var(--wrong-red);
+            color: white;
+            border-color: var(--wrong-red);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: var(--light-blue);
+            display: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            border-left: 4px solid var(--secondary-blue);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: var(--light-blue);
+            border-radius: 5px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background-color: var(--secondary-blue);
+            transition: width 0.3s;
+        }
+
+        .result-container {
+            text-align: center;
+            display: none;
+        }
+
+        .result-container.active {
+            display: block;
+        }
+
+        .profile-title {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+
+        .score {
+            font-size: 4rem;
+            color: var(--secondary-blue);
+            margin: 1rem 0;
+        }
+
+        .restart-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: var(--primary-blue);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .restart-btn:hover {
+            background-color: var(--secondary-blue);
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin: 80px 1rem 1rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">Climate Watch</a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1>Environmental Quiz</h1>
+            <p>Test your knowledge about environmental facts and learn something new!</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+
+        <div id="quiz">
+            <!-- Questions will be dynamically inserted here -->
+        </div>
+
+        <div class="result-container">
+            <h2>Quiz Complete!</h2>
+            <div class="score">0/5</div>
+            <div class="profile-title"></div>
+            <p class="profile-description"></p>
+            <a href="#" class="restart-btn">Try Again</a>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "How many liters of water does it take to make one pair of jeans?",
+                options: ["500 liters", "2,000 liters", "7,500 liters", "10,000 liters"],
+                correct: 2,
+                feedback: "It takes about 7,500 liters of water to make one pair of jeans. That's equivalent to the amount of water one person drinks over 7 years!"
+            },
+            {
+                question: "How many years does it take for a plastic bottle to decompose?",
+                options: ["50 years", "200 years", "450 years", "1000 years"],
+                correct: 2,
+                feedback: "A plastic bottle takes approximately 450 years to decompose. During this time, it breaks down into microplastics that contaminate our soil and water."
+            },
+            {
+                question: "What percentage of the world's oxygen is produced by the Amazon rainforest?",
+                options: ["5%", "10%", "20%", "30%"],
+                correct: 1,
+                feedback: "The Amazon rainforest produces about 10% of the world's oxygen, earning it the nickname 'the lungs of the Earth'."
+            },
+            {
+                question: "How many trees are cut down every minute globally?",
+                options: ["10,000", "20,000", "30,000", "40,000"],
+                correct: 3,
+                feedback: "Approximately 40,000 trees are cut down every minute. That's about 2.4 million trees every hour!"
+            },
+            {
+                question: "How much food does an average household waste per year?",
+                options: ["100 kg", "250 kg", "500 kg", "750 kg"],
+                correct: 1,
+                feedback: "An average household wastes about 250 kg of food per year, contributing to greenhouse gas emissions when it decomposes in landfills."
+            },
+            {
+                question: "What percentage of marine life is threatened by plastic pollution?",
+                options: ["25%", "50%", "75%", "90%"],
+                correct: 3,
+                feedback: "About 75% of marine life is threatened by plastic pollution. Every year, 8 million metric tons of plastic enter our oceans."
+            },
+            {
+                question: "How many species go extinct every day?",
+                options: ["10", "50", "100", "150"],
+                correct: 2,
+                feedback: "Scientists estimate that approximately 100 species go extinct each day, primarily due to habitat loss and climate change."
+            },
+            {
+                question: "What percentage of the world's water is freshwater?",
+                options: ["0.5%", "3%", "10%", "20%"],
+                correct: 1,
+                feedback: "Only 3% of the world's water is freshwater, and most of it is frozen in glaciers. Only 1% is easily accessible for human use."
+            },
+            {
+                question: "How many years does it take for a glass bottle to decompose?",
+                options: ["500 years", "1,000 years", "4,000 years", "1 million years"],
+                correct: 2,
+                feedback: "A glass bottle takes about 4,000 years to decompose naturally. However, glass is 100% recyclable and can be recycled endlessly!"
+            },
+            {
+                question: "How much electricity can be saved by recycling one aluminum can?",
+                options: ["1 hour", "3 hours", "6 hours", "12 hours"],
+                correct: 1,
+                feedback: "Recycling one aluminum can saves enough electricity to power a TV for 3 hours. Aluminum can be recycled infinitely without losing quality!"
+            }
+        ];
+
+        const profiles = [
+            {
+                minScore: 0,
+                title: "Environmental Explorer",
+                description: "You're beginning your journey to environmental awareness. Keep learning and growing!"
+            },
+            {
+                minScore: 2,
+                title: "Earth Guardian",
+                description: "You have a good foundation of environmental knowledge. Keep up the great work!"
+            },
+            {
+                minScore: 3,
+                title: "Climate Warrior",
+                description: "Impressive! Your understanding of environmental issues is strong. You're making a difference!"
+            },
+            {
+                minScore: 4,
+                title: "Environmental Champion",
+                description: "Outstanding! You're a true defender of the environment. Keep spreading awareness!"
+            },
+            {
+                minScore: 5,
+                title: "Eco Master",
+                description: "Perfect score! You're a beacon of environmental knowledge. The planet needs more people like you!"
+            }
+        ];
+
+        let currentQuestions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let canAnswer = true;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function initializeQuiz() {
+            currentQuestions = shuffleArray([...questions]).slice(0, 5);
+            currentQuestion = 0;
+            score = 0;
+            canAnswer = true;
+            showQuestion();
+            updateProgress();
+            document.querySelector('.result-container').classList.remove('active');
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestion];
+            const quizDiv = document.getElementById('quiz');
+            
+            const questionHTML = `
+                <div class="question-container active">
+                    <div class="question">${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectAnswer(${index})">${option}</div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+            `;
+            
+            quizDiv.innerHTML = questionHTML;
+        }
+
+        function selectAnswer(selectedIndex) {
+            if (!canAnswer) return;
+            canAnswer = false;
+
+            const question = currentQuestions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.querySelector('.feedback');
+
+            // Show correct and wrong answers
+            options[question.correct].classList.add('correct');
+            if (selectedIndex !== question.correct) {
+                options[selectedIndex].classList.add('wrong');
+            } else {
+                score++;
+            }
+
+            // Show feedback
+            feedback.textContent = question.feedback;
+            feedback.classList.add('active');
+
+            // Wait and proceed to next question
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < currentQuestions.length) {
+                    showQuestion();
+                    canAnswer = true;
+                } else {
+                    showResults();
+                }
+                updateProgress();
+            }, 5000);
+        }
+
+        function updateProgress() {
+            const progress = document.querySelector('.progress');
+            const percentage = (currentQuestion / currentQuestions.length) * 100;
+            progress.style.width = `${percentage}%`;
+        }
+
+        function showResults() {
+            document.querySelector('#quiz').innerHTML = '';
+            const resultContainer = document.querySelector('.result-container');
+            const scoreElement = resultContainer.querySelector('.score');
+            const profileTitle = resultContainer.querySelector('.profile-title');
+            const profileDescription = resultContainer.querySelector('.profile-description');
+
+            scoreElement.textContent = `${score}/${currentQuestions.length}`;
+
+            // Find appropriate profile
+            const profile = profiles
+                .slice()
+                .reverse()
+                .find(p => score >= p.minScore);
+
+            profileTitle.textContent = profile.title;
+            profileDescription.textContent = profile.description;
+
+            resultContainer.classList.add('active');
+        }
+
+        // Initialize quiz when page loads
+        document.addEventListener('DOMContentLoaded', initializeQuiz);
+
+        // Restart quiz when clicking the restart button
+        document.querySelector('.restart-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            initializeQuiz();
+        });
+    </script>
+</body>
+</html> 
